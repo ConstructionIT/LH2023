@@ -16,6 +16,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var dotNodes = [SCNNode]()
     var textNode = SCNNode()
     var planeNode = [SCNNode]()
+    var texture: [UIImage?] = []
+    var j = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +27,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
+        for i in 0..<5 {
+            texture.append(UIImage(named: "\(i + 1).png"))
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,6 +60,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         planeNode.removeLast()
         
         tempPlane.removeFromParentNode()
+        
+        j = j - 1
+        
+        if j < 0 {
+            j = 0
+        }
 //        print("Test")
     }
 
@@ -213,7 +224,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let height = CGFloat(max.y - min.y)
 
 //            quad.firstMaterial?.diffuse.contents = UIImage(named: "wallpaper.jpg")
-            polyDraw.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(Float(width), Float(height), 1)
+            polyDraw.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(Float(width), Float(height), 3)
 //            quad.firstMaterial?.diffuse.wrapS = SCNWrapMode.repeat
 //            quad.firstMaterial?.diffuse.wrapT = SCNWrapMode.repeat
 
@@ -221,11 +232,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             node.geometry = polyDraw
             planeNode.append(node)
             
-            let texture: UIImage? = UIImage(named: "test.png")
-            
             let material =  SCNMaterial()
             
-            material.diffuse.contents = texture
+            if j >= 5 {
+                j = 0
+                
+                material.diffuse.contents = texture[j]
+            } else {
+                material.diffuse.contents = texture[j]
+                
+                j = j + 1
+            }
             
             node.geometry?.materials = [material]
             
